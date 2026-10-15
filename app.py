@@ -1,11 +1,50 @@
 import streamlit as st
 import random
 
-# إعدادات الصفحة الأساسية لتظهر بشكل مضحك وكوميدي
+# إعدادات الصفحة الأساسية
 st.set_page_config(page_title="🤖 DZ Stupidity AI", page_icon="🤪", layout="centered")
 
+# --- 🎨 كود الـ CSS المخصص لجعل الرسائل يمين ويسار وعلى شكل فقاعات حقيقية ---
+st.markdown("""
+    <style>
+    /* تنسيق حاوي الرسائل العام */
+    [data-testid="stChatMessage"] {
+        border-radius: 15px !important;
+        padding: 10px 15px !important;
+        margin-bottom: 10px !important;
+        width: fit-content !important;
+        max-width: 75% !important;
+        display: flex !important;
+    }
+    
+    /* دفع رسائل المستخدم (User) إلى الجهة اليمنى */
+    [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatar"]:-webkit-any([aria-label="User"], [aria-label="user"])) {
+        margin-left: auto !important;
+        margin-right: 0 !important;
+        background-color: #f0f2f6 !important; /* لون خلفية رسالة المستخدم */
+        color: #31333F !important;
+        flex-direction: row-reverse !important; /* جعل الأيقونة على اليمين */
+    }
+    
+    /* دفع رسائل البوت (Assistant) إلى الجهة اليسرى */
+    [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatar"]:-webkit-any([aria-label="Assistant"], [aria-label="assistant"])) {
+        margin-right: auto !important;
+        margin-left: 0 !important;
+        background-color: #262730 !important; /* لون خلفية رسالة البوت */
+        color: #ffffff !important;
+    }
+    
+    /* ضبط المسافات للنصوص داخل الفقاعات */
+    [data-testid="stChatMessageContent"] {
+        padding-top: 0px !important;
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+    }
+    </style>
+""", unsafe_allow_escaping=False)
+
 st.title("🤪 منصة الغباء الاصطناعي (نسخة DZ) v1.0")
-st.write("أول بوت في العالم يملك نسبة ذكاء تحت الصفر! صندوق المحادثة في الأسفل كما طلبت.")
+st.write("أول بوت في العالم يملك نسبة ذكاء تحت الصفر! الآن مع واجهة فقاعات احترافية (يمين ويسار).")
 st.markdown("---")
 
 # --- بنك البيانات (الكلمات المفتاحية والإجابات) ---
@@ -29,7 +68,7 @@ responses_pc = [
     "البطارية تفرغ بسرعة لأنها تشعر بالملل من تصفحك لنفس المواقع.",
     "الميكرو الخاص بك يحتاج إلى قيلولة، أغلقه واذهب للنوم.",
     "الـ USB هو مفتاح سحري يرفض الدخول من المرة الأولى دائماً.",
-    "نظام التبريد في حاسوبك يعمل بالنفخ، انفخ عليه بفمك كل خمس دقائق.",
+    "نظام التبريد في حاسوبك يعمل بالنفخ, انفخ عليه بفمك كل خمس دقائق.",
     "المودم يتظاهر بالعمل بينما هو يفكر في الاعتزال والذهاب لجيجل."
 ]
 
@@ -56,7 +95,7 @@ responses_prog = [
     "الـ HTML ليست لغة برمجة، هي مجرد مكعبات ليغو رقمية يلعب بها الأطفال.",
     "الـ CSS هي المكياج الذي تضعه للموقع لكي يخفي الأخطاء البرمجية الكارثية خلفه.",
     "إذا اشتغل الكود من المرة الأولى دون أخطاء، فاعلم أن الحاسوب يخطط لمؤامرة ضدك.",
-    "المطور الاحترافي هو شخص يستهلك القهوة ويحولها إلى خطأ برمجلي مجهول.",
+    "المطور الاحترافي هو شخص يستهلك القهوة ويحولها إلى خطأ برملجي مجهول.",
     "قاعدة البيانات (Database) هي الخزانة التي تضع فيها أغراضك وتنسى أين وضعت المفتاح.",
     "الخوارزمية هي كلمة يستخدمها المبرمجون عندما لا يريدون شرح كيف خربوا النظام.",
     "لغة الجافا سكريبت (JS) هي الشقيقة الصغرى للجافا، لكنها متمردة وتكره المنطق.",
@@ -77,25 +116,22 @@ responses_general = [
     "في دليلي البرمجي، أفضل رد على سؤال لا أفهمه هو: 'أووه حقاً؟ مذهل!'."
 ]
 
-# --- إدارة الذاكرة وتاريخ المحادثة (Session State) ---
+# --- إدارة الذاكرة وتاريخ المحادثة ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# عرض الرسائل السابقة المخزنة في الذاكرة لتظهر كشات حقيقي
+# عرض الرسائل المخزنة
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# --- صندوق المدخلات في الأسفل (Chat Input) ---
+# --- صندوق المدخلات في الأسفل ---
 if user_query := st.chat_input("اسأل البوت الغبي هنا..."):
     
-    # 1. عرض رسالة المستخدم فوراً في الشات
     with st.chat_message("user"):
         st.markdown(user_query)
-    # حفظ رسالة المستخدم في الذاكرة
     st.session_state.messages.append({"role": "user", "content": user_query})
     
-    # 2. خوارزمية فحص الكلمات المفتاحية وصنع الرد الكوميدي
     query_lower = user_query.lower()
     final_reply = ""
     
@@ -108,11 +144,10 @@ if user_query := st.chat_input("اسأل البوت الغبي هنا..."):
     else:
         final_reply = random.choice(responses_general)
         
-    # 3. عرض رد البوت الغبي على شكل فقاعة شات تحت المستخدم
-    with st.chat_message("assistant", avatar="🤪"):
+    with st.chat_message("assistant"):
         st.markdown(final_reply)
-    # حفظ رد البوت في الذاكرة
     st.session_state.messages.append({"role": "assistant", "content": final_reply})
 
 st.markdown("---")
 st.caption("تم التطوير بكل غباء وتسلية بواسطة: **Asoum Dev**")
+
