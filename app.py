@@ -4,7 +4,7 @@ import random
 # إعدادات الصفحة الأساسية
 st.set_page_config(page_title="🤖 DZ Stupidity AI", page_icon="🤪", layout="centered")
 
-# --- 🎨 كود الـ CSS المخصص لجعل الرسائل يمين ويسار وعلى شكل فقاعات حقيقية ---
+# --- 🎨 كود الـ CSS المصلح لجعل الرسائل يمين ويسار وعلى شكل فقاعات حقيقية ---
 st.markdown("""
     <style>
     /* تنسيق حاوي الرسائل العام */
@@ -41,7 +41,7 @@ st.markdown("""
         margin-right: 10px !important;
     }
     </style>
-""", unsafe_allow_escaping=False)
+""", unsafe_allow_html=True)
 
 st.title("🤪 منصة الغباء الاصطناعي (نسخة DZ) v1.0")
 st.write("أول بوت في العالم يملك نسبة ذكاء تحت الصفر! الآن مع واجهة فقاعات احترافية (يمين ويسار).")
@@ -150,4 +150,5 @@ if user_query := st.chat_input("اسأل البوت الغبي هنا..."):
 
 st.markdown("---")
 st.caption("تم التطوير بكل غباء وتسلية بواسطة: **Asoum Dev**")
+
 
